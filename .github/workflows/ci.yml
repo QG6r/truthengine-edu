@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Tests and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Lint
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Tests (no network, no API keys)
+        run: uv run pytest -q
+
+  docker:
+    name: Docker images build and the stack starts in demo mode
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start
+        run: docker compose up -d --build
+      - name: Backend answers with the demo report
+        run: |
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/health && break; sleep 2; done
+          curl -s -D - -o /dev/null -X POST http://localhost:8000/analyze -H 'content-type: application/json' \
+            -d '{"text":"Vitamin C cures the common cold."}' | tee headers.txt
+          grep -qi 'x-demo-data: true' headers.txt
+      - name: UI is up
+        run: |
+          for i in $(seq 1 30); do curl -sf http://localhost:8501/_stcore/health && break; sleep 2; done
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs

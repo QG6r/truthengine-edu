@@ -11,6 +11,40 @@ quotes, and the kind of trick that was used, so students learn to spot it themse
 Teachers can also upload documents they trust (textbooks, lecture notes, papers); claims are then checked against them
 too. It does **not** claim to detect deepfakes: media checks are reported as risk signals.
 
+## Quick start (no API keys needed)
+
+```bash
+docker compose up --build
+```
+
+- UI: http://localhost:8501
+- API docs: http://localhost:8000/docs
+
+Without `ANTHROPIC_API_KEY` the backend runs in **demo mode**: `POST /analyze` returns one fixed sample report (about
+Linus Pauling and vitamin C) whatever text you send, with the header `X-Demo-Data: true`, and the UI shows a "demo data"
+badge. This is for showing the interface and the report layout. The real pipeline (claim separation, source search,
+judging, scoring) runs when a key is set:
+
+```bash
+cp .env.example .env     # put your ANTHROPIC_API_KEY into .env
+docker compose up --build
+```
+
+Without Docker, see "Run the demo (backend + front end)" below (`uv sync`, then `uvicorn` and `streamlit`).
+
+| Works without a key | Needs `ANTHROPIC_API_KEY` |
+|---|---|
+| UI, report layout, demo report | claim separation, query planning, judging |
+| Teacher knowledge base: upload, list, delete (retrieval is covered by unit tests) | open-source search results shown as evidence |
+| Gates, scoring and aggregation (unit tested) | `scripts/demo.py`, `eval/run_eval.py` end-to-end runs |
+| All 86 tests and the lint check (`uv run pytest`) | |
+
+## Team
+
+This was a team project built at the **AI for Good Vol2** hackathon. **Robert** led the team: he split the work
+into tasks, assigned them, reviewed every change before it was merged and integrated the result. The team had a mentor
+who gave direction and feedback.
+
 ## How a claim is checked
 
 ```
