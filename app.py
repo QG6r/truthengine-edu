@@ -19,6 +19,7 @@ from schemas import Evidence, Report, Verdict
 
 
 API_URL = os.environ.get('API_URL', 'http://localhost:8000').rstrip('/')
+PUBLIC_API_URL = os.environ.get('PUBLIC_API_URL', API_URL).rstrip('/')  # what the browser can open (differs from API_URL in Docker)
 REQUEST_TIMEOUT_S = 200  # must exceed the backend pipeline timeout (180 s) so the mock fallback arrives
 SOURCES_TIMEOUT_S = 60
 EXAMPLES = DEMO_INPUTS + LONG_INPUTS
@@ -217,7 +218,7 @@ def render_sources_panel() -> None:
         st.markdown(f'**{len(sources)} trusted source(s)**')
         for source in sources:
             col_info, col_delete = st.columns([5, 1])
-            link = safe_url(f'{API_URL}/sources/{source["id"]}/file')
+            link = safe_url(f'{PUBLIC_API_URL}/sources/{source["id"]}/file')
             col_info.markdown(
                 f'[{md(source["title"])}]({link})  \n'
                 f'{md(source["filename"])} · {source["pages"]} pages · {source["chunks"]} passages · {md(source["uploaded_at"][:10])}'

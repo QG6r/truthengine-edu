@@ -10,7 +10,8 @@ See README.md for the tier table, gates and aggregation formula.
 Python 3.12, uv, FastAPI, asyncio, httpx, pydantic v2, Claude Messages API via plain httpx (no anthropic SDK: its native DLLs are blocked by Windows Smart App Control), python-dotenv. pytest (asyncio_mode=auto), ruff.
 
 ## Layout
-- `app/services/separator.py`: `Separator.separate(text) -> list[str]` (not implemented yet).
+- `app/services/separator.py`: `Separator.separate(text) -> list[str]` (Claude-based, validated; `separate_detailed[_async]` returns claims, non-claims and coverage).
+- `pipeline.py`: `run_pipeline(text) -> Report` = Separator -> `CheckTrustedSources.run_detailed_async` -> `Report`.
 - `app/services/knowledge/store.py`: teacher knowledge base (RAG). `KnowledgeStore` saves uploads under `data/knowledge/`
   (git-ignored), chunks them (pypdf for PDF) and searches with pure-Python BM25: no vector DB, native DLLs are blocked on our
   Windows laptops. `truthengine/sources/knowledge.py` turns hits into tier-1D `Evidence`; API: `GET/POST /sources`,
@@ -51,3 +52,4 @@ Tests must not hit the network: inject a fake engine via `engine_factory` or tes
 - `uv run python scripts/demo.py` (needs ANTHROPIC_API_KEY in .env)
 - `uv run python eval/run_eval.py`
 - `uv run uvicorn api:app --port 8000` (backend) and `uv run streamlit run app.py` (front end)
+- `docker compose up --build` (backend :8000 + front end :8501; demo mode without ANTHROPIC_API_KEY)
