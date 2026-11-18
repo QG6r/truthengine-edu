@@ -1,0 +1,16 @@
+.venv
+.env
+.idea
+.ruff_cache
+.mypy_cache
+.pytest_cache
+.coverage
+.coverage.*
+.vscode
+*__pycache__*
+data/
+htmlcov/
+coverage.xml
+.DS_Store
+report.xmleval/report.json
+demo_cache/

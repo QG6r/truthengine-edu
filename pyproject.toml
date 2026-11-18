@@ -1,0 +1,23 @@
+[project]
+name = "ai-hackathon"
+version = "0.1.0"
+description = "TruthEngine Edu: split text into claims and check them against trusted open sources"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2",
+    "httpx",  # TruthEngine HTTP client (also used by FastAPI TestClient)
+    "python-dotenv",
+    "python-multipart",  # file uploads (POST /sources)
+    "streamlit",
+    "requests",
+    "pypdf",  # eval/run_eval.py
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+]

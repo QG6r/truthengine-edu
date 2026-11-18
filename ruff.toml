@@ -1,0 +1,15 @@
+line-length = 140
+target-version = "py312"
+extend-exclude = ["schemas.py"]  # shared contract, kept exactly as specified
+
+[format]
+quote-style = "single"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "ASYNC"]
+
+[lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+
+[lint.isort]
+lines-after-imports = 2
